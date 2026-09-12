@@ -27,6 +27,7 @@ import SubscriptionCard from "@/components/SubscriptionCard";
 import { useState, useMemo } from "react";
 import { useUser } from "@clerk/expo";
 import { useSubscriptions } from "@/lib/subscriptionsStore";
+import { posthog } from "@/src/lib/posthog";
 
 const SafeAreaView = styled(RNSafeAreaView);
 
@@ -100,6 +101,10 @@ export default function App() {
     };
 
     addSubscription(newSub);
+    posthog?.capture("subscription_added", {
+      billing,
+      category,
+    });
     setName("");
     setPrice("");
     setModalVisible(false);
