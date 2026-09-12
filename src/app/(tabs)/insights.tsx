@@ -21,7 +21,6 @@ export default function InsightsScreen() {
       let monthly = 0;
       const categories: { [cat: string]: number } = {};
       let highest: Subscription | undefined = undefined;
-      let highestMonthlyCost = 0;
 
       subscriptions.forEach((sub) => {
         const cost =
@@ -32,9 +31,8 @@ export default function InsightsScreen() {
           const cat = sub.category || "Other";
           categories[cat] = (categories[cat] || 0) + cost;
 
-          if (!highest || cost > highestMonthlyCost) {
+          if (!highest || sub.price > highest.price) {
             highest = sub;
-            highestMonthlyCost = cost;
           }
         }
       });

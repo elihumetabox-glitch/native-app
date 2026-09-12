@@ -3,7 +3,7 @@ import "@/global.css";
 import { useFonts } from "expo-font";
 import { useEffect } from "react";
 import { ClerkProvider } from "@clerk/expo";
-import { tokenCache } from "@clerk/expo/token-cache";
+import { tokenCache } from "@/lib/tokenCache";
 
 SplashScreen.preventAutoHideAsync();
 

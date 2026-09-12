@@ -17,7 +17,6 @@ import images from "@/constants/images";
 import {
   HOME_BALANCE,
   HOME_USER,
-  UPCOMING_SUBSCRIPTIONS,
 } from "@/constants/data";
 import { icons } from "@/constants/icons";
 import { formatCurrency } from "@/lib/utils";
@@ -25,7 +24,7 @@ import dayjs from "dayjs";
 import ListHeading from "@/components/ListHeading";
 import UpcomingSubscriptionCard from "@/components/UpcomingSubscriptionCard";
 import SubscriptionCard from "@/components/SubscriptionCard";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useUser } from "@clerk/expo";
 import { useSubscriptions } from "@/lib/subscriptionsStore";
 
@@ -41,6 +40,21 @@ const CATEGORIES = [
 
 export default function App() {
   const { subscriptions, addSubscription } = useSubscriptions();
+  
+  const upcomingSubscriptions = useMemo(() => {
+    return subscriptions
+      .filter((s) => s.renewalDate)
+      .map((s) => ({
+        id: s.id,
+        icon: s.icon,
+        name: s.name,
+        price: s.price,
+        currency: s.currency,
+        daysLeft: dayjs(s.renewalDate).diff(dayjs(), "day"),
+      }))
+      .sort((a, b) => a.daysLeft - b.daysLeft);
+  }, [subscriptions]);
+  
   const [expandedSubscriptionId, setExpandedSubscriptionId] = useState<
     string | null
   >(null);
@@ -122,7 +136,7 @@ export default function App() {
               <ListHeading title="Upcoming" />
 
               <FlatList
-                data={UPCOMING_SUBSCRIPTIONS}
+                data={upcomingSubscriptions}
                 renderItem={({ item }) => (
                   <UpcomingSubscriptionCard {...item} />
                 )}

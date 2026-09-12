@@ -21,19 +21,40 @@ const SafeAreaView = styled(RNSafeAreaView);
 export default function SettingsScreen() {
   const router = useRouter();
   const { signOut } = useClerk();
-  const { user } = useUser();
+  const { user, isLoaded } = useUser();
   const [signingOut, setSigningOut] = useState(false);
 
-  const displayName =
-    user?.fullName || user?.firstName || "Recurly Member";
-  const emailAddress =
-    user?.primaryEmailAddress?.emailAddress || "user@example.com";
+  const displayName = !isLoaded
+    ? "Loading..."
+    : user
+    ? user.fullName || user.firstName || "Recurly Member"
+    : "Unavailable";
+
+  const emailAddress = !isLoaded
+    ? "Loading..."
+    : user
+    ? user.primaryEmailAddress?.emailAddress || "No email"
+    : "Unavailable";
+
   const avatarSource = user?.imageUrl
     ? { uri: user.imageUrl }
     : images.avatar;
-  const createdAt = user?.createdAt
-    ? dayjs(user.createdAt).format("MMMM YYYY")
-    : dayjs().format("MMMM YYYY");
+
+  const createdAt = !isLoaded
+    ? "Loading..."
+    : user
+    ? user.createdAt
+      ? dayjs(user.createdAt).format("MMMM YYYY")
+      : "Unknown"
+    : "Unavailable";
+
+  const verificationStatus = !isLoaded
+    ? "Loading..."
+    : user
+    ? user.primaryEmailAddress?.verification?.status === "verified"
+      ? "Verified"
+      : "Unverified"
+    : "Unavailable";
 
   const performSignOut = async () => {
     try {
@@ -139,7 +160,11 @@ export default function SettingsScreen() {
                 </Text>
                 <View
                   style={{
-                    backgroundColor: "rgba(22, 163, 74, 0.12)",
+                    backgroundColor: !isLoaded || !user 
+                      ? "rgba(0, 0, 0, 0.05)"
+                      : user.primaryEmailAddress?.verification?.status === "verified"
+                      ? "rgba(22, 163, 74, 0.12)"
+                      : "rgba(234, 179, 8, 0.12)",
                     borderRadius: 8,
                     paddingHorizontal: 8,
                     paddingVertical: 2,
@@ -149,11 +174,15 @@ export default function SettingsScreen() {
                     style={{
                       fontSize: 11,
                       fontWeight: "700",
-                      color: "#16a34a",
+                      color: !isLoaded || !user 
+                        ? "rgba(0, 0, 0, 0.4)"
+                        : user.primaryEmailAddress?.verification?.status === "verified"
+                        ? "#16a34a"
+                        : "#ca8a04",
                       fontFamily: "sans-bold",
                     }}
                   >
-                    Active
+                    {verificationStatus}
                   </Text>
                 </View>
               </View>
