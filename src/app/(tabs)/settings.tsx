@@ -15,6 +15,7 @@ import { useClerk, useUser } from "@clerk/expo";
 import { useRouter } from "expo-router";
 import images from "@/constants/images";
 import dayjs from "dayjs";
+import { posthog } from "@/src/lib/posthog";
 
 const SafeAreaView = styled(RNSafeAreaView);
 
@@ -60,6 +61,8 @@ export default function SettingsScreen() {
     try {
       setSigningOut(true);
       await signOut();
+      posthog?.capture("user_logged_out");
+      posthog?.reset();
       router.replace("/(auth)/sign-in");
     } catch (err: any) {
       console.error("Sign out error", err);

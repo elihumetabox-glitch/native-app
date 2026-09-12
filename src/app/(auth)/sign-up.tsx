@@ -15,6 +15,7 @@ import { useRouter } from "expo-router";
 import { useSignUp, useAuth } from "@clerk/expo";
 import { icons } from "@/constants/icons";
 import { getFriendlyAuthErrorMessage } from "@/lib/authErrors";
+import { posthog } from "@/src/lib/posthog";
 
 export default function SignUpScreen() {
   const router = useRouter();
@@ -108,6 +109,7 @@ export default function SignUpScreen() {
       // If sign-up is already complete without verification
       if (signUp.status === "complete") {
         await signUp.finalize();
+        posthog?.capture("account_created", { method: "email" });
         router.replace("/(tabs)");
         return;
       }
@@ -153,6 +155,7 @@ export default function SignUpScreen() {
 
       if (signUp.status === "complete") {
         await signUp.finalize();
+        posthog?.capture("account_created", { method: "email" });
         router.replace("/(tabs)");
       } else {
         setErrorMessage(

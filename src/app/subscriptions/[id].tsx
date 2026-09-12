@@ -15,6 +15,7 @@ import {
   formatSubscriptionDateTime,
 } from "@/lib/utils";
 import { useSubscriptions } from "@/lib/subscriptionsStore";
+import { posthog } from "@/src/lib/posthog";
 
 export default function SubscriptionDetailsScreen() {
   const router = useRouter();
@@ -34,6 +35,10 @@ export default function SubscriptionDetailsScreen() {
     updateSubscription(sub.id, {
       status: newStatus,
     });
+    posthog?.capture("subscription_status_updated", {
+      previous_status: currentStatus,
+      status: newStatus,
+    });
     Alert.alert(
       "Status Updated",
       `Subscription status changed to ${formatStatusLabel(newStatus)}.`
@@ -51,6 +56,9 @@ export default function SubscriptionDetailsScreen() {
           style: "destructive",
           onPress: () => {
             updateSubscription(sub.id, { status: "cancelled" });
+            posthog?.capture("subscription_cancelled", {
+              previous_status: currentStatus,
+            });
             Alert.alert(
               "Subscription Cancelled",
               `${sub.name} has been marked as cancelled.`
