@@ -313,11 +313,11 @@ export default function SettingsScreen() {
                 style={{
                   fontSize: 14,
                   fontWeight: "700",
-                  color: "#16a34a",
+                  color: verificationStatus === "Verified" ? "#16a34a" : verificationStatus === "Unverified" ? "#ca8a04" : "rgba(0, 0, 0, 0.4)",
                   fontFamily: "sans-semibold",
                 }}
               >
-                Verified
+                {verificationStatus}
               </Text>
             </View>
           </View>

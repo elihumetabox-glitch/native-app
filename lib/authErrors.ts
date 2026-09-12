@@ -17,9 +17,8 @@ export function getFriendlyAuthErrorMessage(error: any): string {
 
     switch (code) {
       case "form_identifier_not_found":
-        return "No account found with this email address.";
       case "form_password_incorrect":
-        return "Incorrect password. Please verify and try again.";
+        return "Invalid email or password.";
       case "form_identifier_exists":
         return "An account with this email address already exists.";
       case "form_password_pwned":

@@ -843,7 +843,7 @@ export default function SignInScreen() {
                       fontFamily: "sans-semibold",
                     }}
                   >
-                    Resend code
+                    Request a new code
                   </Text>
                 </TouchableOpacity>
               </View>

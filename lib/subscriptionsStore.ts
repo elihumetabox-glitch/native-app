@@ -16,8 +16,9 @@ export const subscriptionsStore = {
     subscriptions = newSubs;
     emitChange();
   },
-  add: (newSub: Subscription) => {
-    subscriptions = [newSub, ...subscriptions];
+  add: (newSub: Omit<Subscription, "status"> & { status?: Subscription["status"] }) => {
+    const sub = { ...newSub, status: newSub.status || "active" } as Subscription;
+    subscriptions = [sub, ...subscriptions];
     emitChange();
   },
   update: (id: string, updates: Partial<Subscription>) => {

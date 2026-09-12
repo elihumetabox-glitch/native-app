@@ -43,7 +43,7 @@ export default function App() {
   
   const upcomingSubscriptions = useMemo(() => {
     return subscriptions
-      .filter((s) => s.renewalDate)
+      .filter((s) => s.status === "active" && s.renewalDate && dayjs(s.renewalDate).diff(dayjs(), "day") > 0)
       .map((s) => ({
         id: s.id,
         icon: s.icon,

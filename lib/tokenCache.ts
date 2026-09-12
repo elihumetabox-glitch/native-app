@@ -27,6 +27,7 @@ const createTokenCache = (): TokenCache | undefined => {
         await SecureStore.deleteItemAsync(key);
       } catch (error) {
         console.error("Failed to clear token from secure store", error);
+        throw error;
       }
     },
   };
