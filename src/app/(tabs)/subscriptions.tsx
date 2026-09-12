@@ -8,10 +8,10 @@ import {
 } from "react-native";
 import { SafeAreaView as RNSafeAreaView } from "react-native-safe-area-context";
 import { styled } from "nativewind";
-import { HOME_SUBSCRIPTIONS } from "@/constants/data";
 import { formatCurrency } from "@/lib/utils";
 import SubscriptionCard from "@/components/SubscriptionCard";
 import { useRouter } from "expo-router";
+import { useSubscriptions } from "@/lib/subscriptionsStore";
 
 const SafeAreaView = styled(RNSafeAreaView);
 
@@ -26,6 +26,7 @@ const FILTERS: { label: string; value: FilterStatus }[] = [
 
 export default function SubscriptionsScreen() {
   const router = useRouter();
+  const { subscriptions } = useSubscriptions();
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<FilterStatus>("all");
   const [expandedSubscriptionId, setExpandedSubscriptionId] = useState<
@@ -33,7 +34,7 @@ export default function SubscriptionsScreen() {
   >(null);
 
   const filteredSubscriptions = useMemo(() => {
-    return HOME_SUBSCRIPTIONS.filter((sub) => {
+    return subscriptions.filter((sub) => {
       const matchesSearch =
         sub.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         (sub.category &&
@@ -44,22 +45,22 @@ export default function SubscriptionsScreen() {
 
       return matchesSearch && matchesStatus;
     });
-  }, [searchQuery, statusFilter]);
+  }, [subscriptions, searchQuery, statusFilter]);
 
   const totalMonthlySpend = useMemo(() => {
-    return HOME_SUBSCRIPTIONS.filter((s) => s.status === "active").reduce(
-      (acc, s) => {
+    return subscriptions
+      .filter((s) => s.status === "active")
+      .reduce((acc, s) => {
         if (s.billing === "Monthly") return acc + s.price;
         if (s.billing === "Yearly") return acc + s.price / 12;
         return acc + s.price;
-      },
-      0
-    );
-  }, []);
+      }, 0);
+  }, [subscriptions]);
 
-  const activeCount = HOME_SUBSCRIPTIONS.filter(
-    (s) => s.status === "active"
-  ).length;
+  const activeCount = useMemo(
+    () => subscriptions.filter((s) => s.status === "active").length,
+    [subscriptions]
+  );
 
   return (
     <SafeAreaView className="flex-1 bg-background p-5">
@@ -137,7 +138,7 @@ export default function SubscriptionsScreen() {
                     fontFamily: "sans-bold",
                   }}
                 >
-                  {HOME_SUBSCRIPTIONS.length} Total
+                  {subscriptions.length} Total
                 </Text>
               </View>
             </View>

@@ -2,20 +2,28 @@ import React, { useMemo } from "react";
 import { View, Text, ScrollView } from "react-native";
 import { SafeAreaView as RNSafeAreaView } from "react-native-safe-area-context";
 import { styled } from "nativewind";
-import { HOME_SUBSCRIPTIONS } from "@/constants/data";
 import { formatCurrency } from "@/lib/utils";
+import { useSubscriptions } from "@/lib/subscriptionsStore";
 
 const SafeAreaView = styled(RNSafeAreaView);
 
 export default function InsightsScreen() {
+  const { subscriptions } = useSubscriptions();
+
   // Compute monthly, yearly, and category stats
   const { totalMonthly, totalYearly, categoryStats, highestSub } =
-    useMemo(() => {
+    useMemo<{
+      totalMonthly: number;
+      totalYearly: number;
+      categoryStats: { name: string; amount: number; percent: number }[];
+      highestSub: Subscription | undefined;
+    }>(() => {
       let monthly = 0;
       const categories: { [cat: string]: number } = {};
-      let highest = HOME_SUBSCRIPTIONS[0];
+      let highest: Subscription | undefined = undefined;
+      let highestMonthlyCost = 0;
 
-      HOME_SUBSCRIPTIONS.forEach((sub) => {
+      subscriptions.forEach((sub) => {
         const cost =
           sub.billing === "Yearly" ? sub.price / 12 : sub.price;
 
@@ -24,8 +32,9 @@ export default function InsightsScreen() {
           const cat = sub.category || "Other";
           categories[cat] = (categories[cat] || 0) + cost;
 
-          if (cost > (highest?.price || 0)) {
+          if (!highest || cost > highestMonthlyCost) {
             highest = sub;
+            highestMonthlyCost = cost;
           }
         }
       });
@@ -42,7 +51,7 @@ export default function InsightsScreen() {
         categoryStats: catList,
         highestSub: highest,
       };
-    }, []);
+    }, [subscriptions]);
 
   const categoryColors: { [key: string]: string } = {
     Design: "#ea7a53",

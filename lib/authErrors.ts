@@ -6,7 +6,10 @@ export function getFriendlyAuthErrorMessage(error: any): string {
   if (!error) return "An unexpected error occurred. Please try again.";
 
   // If error has Clerk-specific errors array
-  const clerkErrors = error?.errors || error?.clerkError?.errors;
+  let clerkErrors = error?.errors || error?.clerkError?.errors;
+  if (!clerkErrors && error?.code) {
+    clerkErrors = [error];
+  }
   if (Array.isArray(clerkErrors) && clerkErrors.length > 0) {
     const first = clerkErrors[0];
     const code = first.code || "";

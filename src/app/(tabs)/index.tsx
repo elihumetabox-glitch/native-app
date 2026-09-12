@@ -16,7 +16,6 @@ import { styled } from "nativewind";
 import images from "@/constants/images";
 import {
   HOME_BALANCE,
-  HOME_SUBSCRIPTIONS,
   HOME_USER,
   UPCOMING_SUBSCRIPTIONS,
 } from "@/constants/data";
@@ -28,6 +27,7 @@ import UpcomingSubscriptionCard from "@/components/UpcomingSubscriptionCard";
 import SubscriptionCard from "@/components/SubscriptionCard";
 import { useState } from "react";
 import { useUser } from "@clerk/expo";
+import { useSubscriptions } from "@/lib/subscriptionsStore";
 
 const SafeAreaView = styled(RNSafeAreaView);
 
@@ -40,9 +40,7 @@ const CATEGORIES = [
 ];
 
 export default function App() {
-  const [subscriptions, setSubscriptions] = useState<Subscription[]>(
-    HOME_SUBSCRIPTIONS
-  );
+  const { subscriptions, addSubscription } = useSubscriptions();
   const [expandedSubscriptionId, setExpandedSubscriptionId] = useState<
     string | null
   >(null);
@@ -66,8 +64,8 @@ export default function App() {
   const handleAddSubscription = () => {
     if (!name.trim() || !price.trim()) return;
 
-    const parsedPrice = parseFloat(price);
-    if (isNaN(parsedPrice) || parsedPrice <= 0) return;
+    const parsedPrice = Number(price.trim());
+    if (!Number.isFinite(parsedPrice) || parsedPrice <= 0) return;
 
     const newSub: Subscription = {
       id: `custom-${Date.now()}`,
@@ -84,7 +82,7 @@ export default function App() {
       color: "#f5c542",
     };
 
-    setSubscriptions([newSub, ...subscriptions]);
+    addSubscription(newSub);
     setName("");
     setPrice("");
     setModalVisible(false);

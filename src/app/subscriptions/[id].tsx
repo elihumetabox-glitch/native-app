@@ -8,33 +8,27 @@ import {
   Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useLocalSearchParams, useRouter } from "expo-router";
-import { HOME_SUBSCRIPTIONS } from "@/constants/data";
+import { useLocalSearchParams, useRouter, Redirect } from "expo-router";
 import { icons } from "@/constants/icons";
 import {
   formatCurrency,
   formatStatusLabel,
   formatSubscriptionDateTime,
 } from "@/lib/utils";
+import { useSubscriptions } from "@/lib/subscriptionsStore";
 
 export default function SubscriptionDetailsScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
+  const { subscriptions, updateSubscription } = useSubscriptions();
 
-  const initialSub: Subscription = HOME_SUBSCRIPTIONS.find((s) => s.id === id) || {
-    id: id || "custom",
-    icon: icons.wallet,
-    name: "Subscription Details",
-    plan: "Standard Plan",
-    category: "Services",
-    paymentMethod: "Visa ending in 4242",
-    status: "active",
-    startDate: "2025-01-01T00:00:00.000Z",
-    price: 9.99,
-    currency: "USD",
-    billing: "Monthly",
-    renewalDate: "2026-04-01T00:00:00.000Z",
-  };
+  const sub = subscriptions.find((s) => s.id === id);
+
+  if (!sub) {
+    return <Redirect href="/(tabs)" />;
+  }
+
+  const initialSub: Subscription = sub;
 
   const [status, setStatus] = useState<string>(
     initialSub.status || "active"
@@ -42,6 +36,13 @@ export default function SubscriptionDetailsScreen() {
 
   const handleToggleStatus = () => {
     const newStatus = status === "active" ? "paused" : "active";
+    // Persist to shared store
+    if (id) {
+      updateSubscription(id, {
+        status: newStatus as "active" | "paused" | "cancelled",
+      });
+    }
+    // Update local state
     setStatus(newStatus);
     Alert.alert(
       "Status Updated",
@@ -59,6 +60,11 @@ export default function SubscriptionDetailsScreen() {
           text: "Yes, Cancel",
           style: "destructive",
           onPress: () => {
+            // Persist to shared store
+            if (id) {
+              updateSubscription(id, { status: "cancelled" });
+            }
+            // Update local state
             setStatus("cancelled");
             Alert.alert(
               "Subscription Cancelled",

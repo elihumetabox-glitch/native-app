@@ -296,6 +296,9 @@ export default function SignUpScreen() {
               elevation: 2,
             }}
           >
+            {/* Clerk Bot Protection CAPTCHA container for Expo web */}
+            <View nativeID="clerk-captcha" />
+
             {/* Global Error Banner */}
             {errorMessage ? (
               <View
