@@ -315,36 +315,6 @@ export default function SubscriptionDetailsScreen() {
                 fontFamily: "sans-medium",
               }}
             >
-              Payment Method
-            </Text>
-            <Text
-              style={{
-                fontSize: 14,
-                fontWeight: "700",
-                color: "#081126",
-                fontFamily: "sans-semibold",
-              }}
-            >
-              {sub.paymentMethod || "Default Card"}
-            </Text>
-          </View>
-
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              padding: 16,
-              borderBottomWidth: 1,
-              borderBottomColor: "rgba(0, 0, 0, 0.06)",
-            }}
-          >
-            <Text
-              style={{
-                fontSize: 14,
-                color: "rgba(0, 0, 0, 0.6)",
-                fontFamily: "sans-medium",
-              }}
-            >
               Start Date
             </Text>
             <Text

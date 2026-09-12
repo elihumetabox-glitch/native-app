@@ -70,7 +70,6 @@ export default function App() {
   const [price, setPrice] = useState("");
   const [billing, setBilling] = useState<"Monthly" | "Yearly">("Monthly");
   const [category, setCategory] = useState("Design");
-  const paymentMethod = "Visa ending in 4242";
 
   const { user } = useUser();
 
@@ -93,7 +92,6 @@ export default function App() {
       currency: "USD",
       billing,
       category,
-      paymentMethod,
       icon: icons.wallet,
       status: "active",
       startDate: new Date().toISOString(),
