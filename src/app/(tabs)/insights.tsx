@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { View, Text, ScrollView } from "react-native";
 import { SafeAreaView as RNSafeAreaView } from "react-native-safe-area-context";
 import { styled } from "nativewind";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency, convertCurrency } from "@/lib/utils";
 import { useSubscriptions } from "@/lib/subscriptionsStore";
 
 const SafeAreaView = styled(RNSafeAreaView);
@@ -23,15 +23,17 @@ export default function InsightsScreen() {
       let highest: Subscription | undefined = undefined;
 
       subscriptions.forEach((sub) => {
+        const convertedPrice = convertCurrency(sub.price, sub.currency || "USD", "USD");
         const cost =
-          sub.billing === "Yearly" ? sub.price / 12 : sub.price;
+          sub.billing === "Yearly" ? convertedPrice / 12 : convertedPrice;
 
         if (sub.status === "active") {
           monthly += cost;
           const cat = sub.category || "Other";
           categories[cat] = (categories[cat] || 0) + cost;
 
-          if (!highest || sub.price > highest.price) {
+          const highestConverted = highest ? convertCurrency(highest.price, highest.currency || "USD", "USD") : 0;
+          if (!highest || convertedPrice > highestConverted) {
             highest = sub;
           }
         }

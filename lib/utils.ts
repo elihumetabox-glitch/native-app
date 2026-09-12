@@ -13,6 +13,12 @@ export const formatCurrency = (value: number, currency = "USD"): string => {
     }
 };
 
+export const convertCurrency = (amount: number, from: string, to: string): number => {
+    // Placeholder conversion. In a real app, this would use real rates.
+    // Assuming 1:1 conversion for now as no conversion rates are available.
+    return amount;
+};
+
 export const formatSubscriptionDateTime = (value?: string): string => {
     if (!value) return "Not provided";
     const parsedDate = dayjs(value);
