@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   View,
   Text,
@@ -9,7 +9,6 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams, useRouter, Redirect } from "expo-router";
-import { icons } from "@/constants/icons";
 import {
   formatCurrency,
   formatStatusLabel,
@@ -28,22 +27,13 @@ export default function SubscriptionDetailsScreen() {
     return <Redirect href="/(tabs)" />;
   }
 
-  const initialSub: Subscription = sub;
-
-  const [status, setStatus] = useState<string>(
-    initialSub.status || "active"
-  );
+  const currentStatus = sub.status || "active";
 
   const handleToggleStatus = () => {
-    const newStatus = status === "active" ? "paused" : "active";
-    // Persist to shared store
-    if (id) {
-      updateSubscription(id, {
-        status: newStatus as "active" | "paused" | "cancelled",
-      });
-    }
-    // Update local state
-    setStatus(newStatus);
+    const newStatus = currentStatus === "active" ? "paused" : "active";
+    updateSubscription(sub.id, {
+      status: newStatus,
+    });
     Alert.alert(
       "Status Updated",
       `Subscription status changed to ${formatStatusLabel(newStatus)}.`
@@ -53,22 +43,17 @@ export default function SubscriptionDetailsScreen() {
   const handleCancel = () => {
     Alert.alert(
       "Cancel Subscription",
-      `Are you sure you want to cancel ${initialSub.name}?`,
+      `Are you sure you want to cancel ${sub.name}?`,
       [
         { text: "No, Keep It", style: "cancel" },
         {
           text: "Yes, Cancel",
           style: "destructive",
           onPress: () => {
-            // Persist to shared store
-            if (id) {
-              updateSubscription(id, { status: "cancelled" });
-            }
-            // Update local state
-            setStatus("cancelled");
+            updateSubscription(sub.id, { status: "cancelled" });
             Alert.alert(
               "Subscription Cancelled",
-              `${initialSub.name} has been marked as cancelled.`
+              `${sub.name} has been marked as cancelled.`
             );
           },
         },
@@ -145,9 +130,9 @@ export default function SubscriptionDetailsScreen() {
             marginBottom: 20,
           }}
         >
-          {initialSub.icon && (
+          {sub.icon && (
             <Image
-              source={initialSub.icon}
+              source={sub.icon}
               style={{
                 width: 64,
                 height: 64,
@@ -167,7 +152,7 @@ export default function SubscriptionDetailsScreen() {
               textAlign: "center",
             }}
           >
-            {initialSub.name}
+            {sub.name}
           </Text>
 
           <Text
@@ -178,7 +163,7 @@ export default function SubscriptionDetailsScreen() {
               marginTop: 2,
             }}
           >
-            {initialSub.plan || initialSub.category}
+            {sub.plan || sub.category}
           </Text>
 
           {/* Status Badge */}
@@ -189,9 +174,9 @@ export default function SubscriptionDetailsScreen() {
               paddingVertical: 4,
               borderRadius: 10,
               backgroundColor:
-                status === "active"
+                currentStatus === "active"
                   ? "rgba(22, 163, 74, 0.12)"
-                  : status === "paused"
+                  : currentStatus === "paused"
                   ? "rgba(234, 122, 83, 0.15)"
                   : "rgba(220, 38, 38, 0.12)",
             }}
@@ -202,14 +187,14 @@ export default function SubscriptionDetailsScreen() {
                 fontWeight: "700",
                 fontFamily: "sans-bold",
                 color:
-                  status === "active"
+                  currentStatus === "active"
                     ? "#16a34a"
-                    : status === "paused"
+                    : currentStatus === "paused"
                     ? "#ea7a53"
                     : "#dc2626",
               }}
             >
-              {formatStatusLabel(status)}
+              {formatStatusLabel(currentStatus)}
             </Text>
           </View>
         </View>
@@ -248,7 +233,7 @@ export default function SubscriptionDetailsScreen() {
                 marginTop: 2,
               }}
             >
-              {formatCurrency(initialSub.price, initialSub.currency)}
+              {formatCurrency(sub.price, sub.currency)}
             </Text>
           </View>
 
@@ -268,7 +253,7 @@ export default function SubscriptionDetailsScreen() {
                 fontFamily: "sans-bold",
               }}
             >
-              {initialSub.billing}
+              {sub.billing}
             </Text>
           </View>
         </View>
@@ -310,7 +295,7 @@ export default function SubscriptionDetailsScreen() {
                 fontFamily: "sans-semibold",
               }}
             >
-              {initialSub.category || "General"}
+              {sub.category || "General"}
             </Text>
           </View>
 
@@ -340,7 +325,7 @@ export default function SubscriptionDetailsScreen() {
                 fontFamily: "sans-semibold",
               }}
             >
-              {initialSub.paymentMethod || "Default Card"}
+              {sub.paymentMethod || "Default Card"}
             </Text>
           </View>
 
@@ -370,8 +355,8 @@ export default function SubscriptionDetailsScreen() {
                 fontFamily: "sans-semibold",
               }}
             >
-              {initialSub.startDate
-                ? formatSubscriptionDateTime(initialSub.startDate)
+              {sub.startDate
+                ? formatSubscriptionDateTime(sub.startDate)
                 : "N/A"}
             </Text>
           </View>
@@ -400,8 +385,8 @@ export default function SubscriptionDetailsScreen() {
                 fontFamily: "sans-semibold",
               }}
             >
-              {initialSub.renewalDate
-                ? formatSubscriptionDateTime(initialSub.renewalDate)
+              {sub.renewalDate
+                ? formatSubscriptionDateTime(sub.renewalDate)
                 : "N/A"}
             </Text>
           </View>
@@ -409,7 +394,7 @@ export default function SubscriptionDetailsScreen() {
 
         {/* Action Buttons */}
         <View style={{ gap: 12 }}>
-          {status !== "cancelled" && (
+          {currentStatus !== "cancelled" && (
             <TouchableOpacity
               onPress={handleToggleStatus}
               activeOpacity={0.8}
@@ -431,14 +416,14 @@ export default function SubscriptionDetailsScreen() {
                   fontFamily: "sans-bold",
                 }}
               >
-                {status === "active"
+                {currentStatus === "active"
                   ? "Pause Subscription"
                   : "Resume Subscription"}
               </Text>
             </TouchableOpacity>
           )}
 
-          {status !== "cancelled" && (
+          {currentStatus !== "cancelled" && (
             <TouchableOpacity
               onPress={handleCancel}
               activeOpacity={0.8}

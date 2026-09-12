@@ -21,9 +21,9 @@ export const subscriptionsStore = {
     subscriptions = [sub, ...subscriptions];
     emitChange();
   },
-  update: (id: string, updates: Partial<Subscription>) => {
+  update: (id: string, updates: Partial<Omit<Subscription, "id">>) => {
     subscriptions = subscriptions.map((s) =>
-      s.id === id ? { ...s, ...updates } : s
+      s.id === id ? { ...s, ...updates, id: s.id } : s
     );
     emitChange();
   },

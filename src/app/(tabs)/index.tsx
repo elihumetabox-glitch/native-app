@@ -43,14 +43,19 @@ export default function App() {
   
   const upcomingSubscriptions = useMemo(() => {
     return subscriptions
-      .filter((s) => s.status === "active" && s.renewalDate && dayjs(s.renewalDate).diff(dayjs(), "day") > 0)
+      .filter(
+        (s) =>
+          s.status === "active" &&
+          s.renewalDate &&
+          dayjs(s.renewalDate).diff(dayjs()) > 0
+      )
       .map((s) => ({
         id: s.id,
         icon: s.icon,
         name: s.name,
         price: s.price,
         currency: s.currency,
-        daysLeft: dayjs(s.renewalDate).diff(dayjs(), "day"),
+        daysLeft: Math.ceil(dayjs(s.renewalDate).diff(dayjs(), "day", true)),
       }))
       .sort((a, b) => a.daysLeft - b.daysLeft);
   }, [subscriptions]);
@@ -65,7 +70,7 @@ export default function App() {
   const [price, setPrice] = useState("");
   const [billing, setBilling] = useState<"Monthly" | "Yearly">("Monthly");
   const [category, setCategory] = useState("Design");
-  const [paymentMethod, setPaymentMethod] = useState("Visa ending in 4242");
+  const paymentMethod = "Visa ending in 4242";
 
   const { user } = useUser();
 
@@ -143,11 +148,7 @@ export default function App() {
                 keyExtractor={(item) => item.id}
                 horizontal
                 showsHorizontalScrollIndicator={false}
-                ListEmptyComponent={
-                  <Text className="home-empty-state">
-                    No upcoming renewals yet.
-                  </Text>
-                }
+                ListEmptyComponent={<Text className="home-empty-state">No upcoming renewals yet.</Text>}
               />
             </View>
 
@@ -194,6 +195,8 @@ export default function App() {
                 onPress={() => setModalVisible(false)}
                 className="modal-close"
                 activeOpacity={0.7}
+                accessibilityRole="button"
+                accessibilityLabel="Close subscription modal"
               >
                 <Text className="modal-close-text">✕</Text>
               </TouchableOpacity>

@@ -20,6 +20,7 @@ const createTokenCache = (): TokenCache | undefined => {
         await SecureStore.setItemAsync(key, value);
       } catch (error) {
         console.error("Failed to save token to secure store", error);
+        throw error;
       }
     },
     async clearToken(key: string) {

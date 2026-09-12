@@ -8,9 +8,8 @@ import {
 } from "react-native";
 import { SafeAreaView as RNSafeAreaView } from "react-native-safe-area-context";
 import { styled } from "nativewind";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency, convertCurrency } from "@/lib/utils";
 import SubscriptionCard from "@/components/SubscriptionCard";
-import { useRouter } from "expo-router";
 import { useSubscriptions } from "@/lib/subscriptionsStore";
 
 const SafeAreaView = styled(RNSafeAreaView);
@@ -25,7 +24,6 @@ const FILTERS: { label: string; value: FilterStatus }[] = [
 ];
 
 export default function SubscriptionsScreen() {
-  const router = useRouter();
   const { subscriptions } = useSubscriptions();
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<FilterStatus>("all");
@@ -51,9 +49,10 @@ export default function SubscriptionsScreen() {
     return subscriptions
       .filter((s) => s.status === "active")
       .reduce((acc, s) => {
-        if (s.billing === "Monthly") return acc + s.price;
-        if (s.billing === "Yearly") return acc + s.price / 12;
-        return acc + s.price;
+        const convertedPrice = convertCurrency(s.price, s.currency || "USD", "USD");
+        if (s.billing === "Monthly") return acc + convertedPrice;
+        if (s.billing === "Yearly") return acc + convertedPrice / 12;
+        return acc + convertedPrice;
       }, 0);
   }, [subscriptions]);
 
