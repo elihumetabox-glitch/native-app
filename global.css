@@ -1,8 +1,4 @@
-@import "tailwindcss/theme.css" layer(theme);
-@import "tailwindcss/preflight.css" layer(base);
-@import "tailwindcss/utilities.css";
-
-@import "nativewind/theme";
+@import "tailwindcss";
 
 @theme {
     --color-background: #fff9e3;
@@ -11,7 +7,7 @@
     --color-muted: #f6eecf;
     --color-muted-foreground: rgba(0, 0, 0, 0.6);
     --color-primary: #081126;
-    --color-accent: #ea7a53;
+    --color-accent: #c04a20;
     --color-border: rgba(0, 0, 0, 0.1);
     --color-success: #16a34a;
     --color-destructive: #dc2626;
@@ -322,7 +318,7 @@
     }
 
     .auth-button-text {
-        @apply text-base font-sans-bold text-primary;
+        @apply text-base font-sans-bold text-white;
     }
 
     .auth-secondary-button {

@@ -5,7 +5,7 @@ export const colors = {
     muted: "#f6eecf",
     mutedForeground: "rgba(0, 0, 0, 0.6)",
     primary: "#081126",
-    accent: "#ea7a53",
+    accent: "#c04a20",
     border: "rgba(0, 0, 0, 0.1)",
     success: "#16a34a",
     destructive: "#dc2626",

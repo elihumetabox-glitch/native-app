@@ -19,11 +19,11 @@ declare global {
         plan?: string;
         category?: string;
         paymentMethod?: string;
-        status?: string;
+        status: "active" | "paused" | "cancelled";
         startDate?: string;
         price: number;
         currency?: string;
-        billing: string;
+        billing: "Monthly" | "Yearly";
         renewalDate?: string;
         color?: string;
     }
@@ -49,6 +49,7 @@ declare global {
 
     interface ListHeadingProps {
         title: string;
+        onPress?: () => void;
     }
 }
 
