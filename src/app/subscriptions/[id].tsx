@@ -1,13 +1,465 @@
-import {View, Text} from 'react-native'
-import {Link, useLocalSearchParams} from "expo-router";
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  ScrollView,
+  Alert,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { HOME_SUBSCRIPTIONS } from "@/constants/data";
+import { icons } from "@/constants/icons";
+import {
+  formatCurrency,
+  formatStatusLabel,
+  formatSubscriptionDateTime,
+} from "@/lib/utils";
 
-const SubscriptionDetails = () => {
-    const {id} = useLocalSearchParams<{id: string}>();
-    return (
-        <View>
-            <Text>Subscription Details {id}</Text>
-            <Link href="/">Go Back</Link>
+export default function SubscriptionDetailsScreen() {
+  const router = useRouter();
+  const { id } = useLocalSearchParams<{ id: string }>();
+
+  const initialSub: Subscription = HOME_SUBSCRIPTIONS.find((s) => s.id === id) || {
+    id: id || "custom",
+    icon: icons.wallet,
+    name: "Subscription Details",
+    plan: "Standard Plan",
+    category: "Services",
+    paymentMethod: "Visa ending in 4242",
+    status: "active",
+    startDate: "2025-01-01T00:00:00.000Z",
+    price: 9.99,
+    currency: "USD",
+    billing: "Monthly",
+    renewalDate: "2026-04-01T00:00:00.000Z",
+  };
+
+  const [status, setStatus] = useState<string>(
+    initialSub.status || "active"
+  );
+
+  const handleToggleStatus = () => {
+    const newStatus = status === "active" ? "paused" : "active";
+    setStatus(newStatus);
+    Alert.alert(
+      "Status Updated",
+      `Subscription status changed to ${formatStatusLabel(newStatus)}.`
+    );
+  };
+
+  const handleCancel = () => {
+    Alert.alert(
+      "Cancel Subscription",
+      `Are you sure you want to cancel ${initialSub.name}?`,
+      [
+        { text: "No, Keep It", style: "cancel" },
+        {
+          text: "Yes, Cancel",
+          style: "destructive",
+          onPress: () => {
+            setStatus("cancelled");
+            Alert.alert(
+              "Subscription Cancelled",
+              `${initialSub.name} has been marked as cancelled.`
+            );
+          },
+        },
+      ]
+    );
+  };
+
+  return (
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#fff9e3" }}>
+      <ScrollView
+        contentContainerStyle={{
+          paddingHorizontal: 20,
+          paddingVertical: 16,
+          paddingBottom: 40,
+        }}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Navigation Bar */}
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            marginBottom: 20,
+          }}
+        >
+          <TouchableOpacity
+            onPress={() => router.back()}
+            activeOpacity={0.7}
+            style={{
+              paddingHorizontal: 14,
+              paddingVertical: 8,
+              borderRadius: 14,
+              backgroundColor: "#fff8e7",
+              borderWidth: 1,
+              borderColor: "rgba(0,0,0,0.08)",
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 14,
+                fontWeight: "700",
+                color: "#081126",
+                fontFamily: "sans-semibold",
+              }}
+            >
+              ← Back
+            </Text>
+          </TouchableOpacity>
+
+          <Text
+            style={{
+              fontSize: 16,
+              fontWeight: "800",
+              color: "#081126",
+              fontFamily: "sans-bold",
+            }}
+          >
+            Subscription Details
+          </Text>
+
+          <View style={{ width: 60 }} />
         </View>
-    )
+
+        {/* Hero Card */}
+        <View
+          style={{
+            backgroundColor: "#fff8e7",
+            borderRadius: 24,
+            borderWidth: 1,
+            borderColor: "rgba(0, 0, 0, 0.08)",
+            padding: 24,
+            alignItems: "center",
+            marginBottom: 20,
+          }}
+        >
+          {initialSub.icon && (
+            <Image
+              source={initialSub.icon}
+              style={{
+                width: 64,
+                height: 64,
+                borderRadius: 16,
+                marginBottom: 12,
+              }}
+              resizeMode="contain"
+            />
+          )}
+
+          <Text
+            style={{
+              fontSize: 22,
+              fontWeight: "800",
+              color: "#081126",
+              fontFamily: "sans-bold",
+              textAlign: "center",
+            }}
+          >
+            {initialSub.name}
+          </Text>
+
+          <Text
+            style={{
+              fontSize: 14,
+              color: "rgba(0,0,0,0.6)",
+              fontFamily: "sans-medium",
+              marginTop: 2,
+            }}
+          >
+            {initialSub.plan || initialSub.category}
+          </Text>
+
+          {/* Status Badge */}
+          <View
+            style={{
+              marginTop: 10,
+              paddingHorizontal: 12,
+              paddingVertical: 4,
+              borderRadius: 10,
+              backgroundColor:
+                status === "active"
+                  ? "rgba(22, 163, 74, 0.12)"
+                  : status === "paused"
+                  ? "rgba(234, 122, 83, 0.15)"
+                  : "rgba(220, 38, 38, 0.12)",
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 12,
+                fontWeight: "700",
+                fontFamily: "sans-bold",
+                color:
+                  status === "active"
+                    ? "#16a34a"
+                    : status === "paused"
+                    ? "#ea7a53"
+                    : "#dc2626",
+              }}
+            >
+              {formatStatusLabel(status)}
+            </Text>
+          </View>
+        </View>
+
+        {/* Pricing Card */}
+        <View
+          style={{
+            backgroundColor: "#ea7a53",
+            borderRadius: 20,
+            padding: 20,
+            marginBottom: 20,
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <View>
+            <Text
+              style={{
+                fontSize: 12,
+                fontWeight: "600",
+                color: "rgba(255, 255, 255, 0.8)",
+                textTransform: "uppercase",
+                letterSpacing: 1,
+                fontFamily: "sans-semibold",
+              }}
+            >
+              Recurring Amount
+            </Text>
+            <Text
+              style={{
+                fontSize: 28,
+                fontWeight: "800",
+                color: "#ffffff",
+                fontFamily: "sans-extrabold",
+                marginTop: 2,
+              }}
+            >
+              {formatCurrency(initialSub.price, initialSub.currency)}
+            </Text>
+          </View>
+
+          <View
+            style={{
+              backgroundColor: "rgba(255, 255, 255, 0.2)",
+              paddingHorizontal: 14,
+              paddingVertical: 6,
+              borderRadius: 12,
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 13,
+                fontWeight: "700",
+                color: "#ffffff",
+                fontFamily: "sans-bold",
+              }}
+            >
+              {initialSub.billing}
+            </Text>
+          </View>
+        </View>
+
+        {/* Details Table */}
+        <View
+          style={{
+            backgroundColor: "#fff8e7",
+            borderRadius: 20,
+            borderWidth: 1,
+            borderColor: "rgba(0, 0, 0, 0.08)",
+            overflow: "hidden",
+            marginBottom: 24,
+          }}
+        >
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              padding: 16,
+              borderBottomWidth: 1,
+              borderBottomColor: "rgba(0, 0, 0, 0.06)",
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 14,
+                color: "rgba(0, 0, 0, 0.6)",
+                fontFamily: "sans-medium",
+              }}
+            >
+              Category
+            </Text>
+            <Text
+              style={{
+                fontSize: 14,
+                fontWeight: "700",
+                color: "#081126",
+                fontFamily: "sans-semibold",
+              }}
+            >
+              {initialSub.category || "General"}
+            </Text>
+          </View>
+
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              padding: 16,
+              borderBottomWidth: 1,
+              borderBottomColor: "rgba(0, 0, 0, 0.06)",
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 14,
+                color: "rgba(0, 0, 0, 0.6)",
+                fontFamily: "sans-medium",
+              }}
+            >
+              Payment Method
+            </Text>
+            <Text
+              style={{
+                fontSize: 14,
+                fontWeight: "700",
+                color: "#081126",
+                fontFamily: "sans-semibold",
+              }}
+            >
+              {initialSub.paymentMethod || "Default Card"}
+            </Text>
+          </View>
+
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              padding: 16,
+              borderBottomWidth: 1,
+              borderBottomColor: "rgba(0, 0, 0, 0.06)",
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 14,
+                color: "rgba(0, 0, 0, 0.6)",
+                fontFamily: "sans-medium",
+              }}
+            >
+              Start Date
+            </Text>
+            <Text
+              style={{
+                fontSize: 14,
+                fontWeight: "700",
+                color: "#081126",
+                fontFamily: "sans-semibold",
+              }}
+            >
+              {initialSub.startDate
+                ? formatSubscriptionDateTime(initialSub.startDate)
+                : "N/A"}
+            </Text>
+          </View>
+
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              padding: 16,
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 14,
+                color: "rgba(0, 0, 0, 0.6)",
+                fontFamily: "sans-medium",
+              }}
+            >
+              Next Renewal
+            </Text>
+            <Text
+              style={{
+                fontSize: 14,
+                fontWeight: "700",
+                color: "#081126",
+                fontFamily: "sans-semibold",
+              }}
+            >
+              {initialSub.renewalDate
+                ? formatSubscriptionDateTime(initialSub.renewalDate)
+                : "N/A"}
+            </Text>
+          </View>
+        </View>
+
+        {/* Action Buttons */}
+        <View style={{ gap: 12 }}>
+          {status !== "cancelled" && (
+            <TouchableOpacity
+              onPress={handleToggleStatus}
+              activeOpacity={0.8}
+              style={{
+                backgroundColor: "#fff8e7",
+                borderWidth: 1,
+                borderColor: "rgba(0, 0, 0, 0.12)",
+                borderRadius: 18,
+                paddingVertical: 16,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Text
+                style={{
+                  color: "#081126",
+                  fontSize: 15,
+                  fontWeight: "700",
+                  fontFamily: "sans-bold",
+                }}
+              >
+                {status === "active"
+                  ? "Pause Subscription"
+                  : "Resume Subscription"}
+              </Text>
+            </TouchableOpacity>
+          )}
+
+          {status !== "cancelled" && (
+            <TouchableOpacity
+              onPress={handleCancel}
+              activeOpacity={0.8}
+              style={{
+                backgroundColor: "rgba(220, 38, 38, 0.08)",
+                borderWidth: 1,
+                borderColor: "rgba(220, 38, 38, 0.2)",
+                borderRadius: 18,
+                paddingVertical: 16,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Text
+                style={{
+                  color: "#dc2626",
+                  fontSize: 15,
+                  fontWeight: "700",
+                  fontFamily: "sans-bold",
+                }}
+              >
+                Cancel Subscription
+              </Text>
+            </TouchableOpacity>
+          )}
+        </View>
+      </ScrollView>
+    </SafeAreaView>
+  );
 }
-    export default SubscriptionDetails
