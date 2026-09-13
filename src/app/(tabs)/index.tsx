@@ -11,7 +11,6 @@ import { SafeAreaView as RNSafeAreaView } from "react-native-safe-area-context";
 import { styled } from "nativewind";
 import images from "@/constants/images";
 import {
-  HOME_BALANCE,
   HOME_USER,
 } from "@/constants/data";
 import { icons } from "@/constants/icons";
@@ -30,6 +29,19 @@ const SafeAreaView = styled(RNSafeAreaView);
 
 export default function App() {
   const { subscriptions, addSubscription } = useSubscriptions();
+
+  const { totalBalance, nextRenewalDate } = useMemo(() => {
+    const activeSubscriptions = subscriptions.filter(s => s.status === "active");
+    const total = activeSubscriptions.reduce((sum, s) => sum + s.price, 0);
+    const earliestRenewal = activeSubscriptions.reduce((earliest, s) => {
+      if (!s.renewalDate) return earliest;
+      if (!earliest || dayjs(s.renewalDate).isBefore(dayjs(earliest))) {
+        return s.renewalDate;
+      }
+      return earliest;
+    }, null as string | null);
+    return { totalBalance: total, nextRenewalDate: earliestRenewal };
+  }, [subscriptions]);
   
   const upcomingSubscriptions = useMemo(() => {
     return subscriptions
@@ -88,11 +100,13 @@ export default function App() {
                 <Text className="home-balance-label">Balance</Text>
                 <View className="home-balance-row">
                   <Text className="home-balance-amount">
-                    {formatCurrency(HOME_BALANCE.amount)}
+                    {formatCurrency(totalBalance)}
                   </Text>
-                  <Text className="home-balance-date">
-                    {dayjs(HOME_BALANCE.nextRenewalDate).format("MM/DD")}
-                  </Text>
+                  {nextRenewalDate && (
+                    <Text className="home-balance-date">
+                      {dayjs(nextRenewalDate).format("MM/DD")}
+                    </Text>
+                  )}
                 </View>
               </View>
 

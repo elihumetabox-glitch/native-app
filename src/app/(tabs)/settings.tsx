@@ -403,8 +403,7 @@ export default function SettingsScreen() {
                   fontFamily: "sans-semibold",
                 }}
               >
-                {/* TODO: Derive from stored preference and system permissions */}
-                Enabled
+                Unavailable
               </Text>
             </View>
           </View>
