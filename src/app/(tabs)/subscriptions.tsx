@@ -64,6 +64,7 @@ export default function SubscriptionsScreen() {
   return (
     <SafeAreaView className="flex-1 bg-background p-5">
       <FlatList
+        keyboardDismissMode="on-drag"
         data={filteredSubscriptions}
         keyExtractor={(item) => item.id}
         showsVerticalScrollIndicator={false}
