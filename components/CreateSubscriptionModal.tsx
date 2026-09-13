@@ -12,6 +12,7 @@ import {
 import { clsx } from "clsx";
 import dayjs from "dayjs";
 import { icons } from "@/constants/icons";
+import {posthog} from "@/src/lib/posthog";
 
 const CATEGORIES = [
   "Entertainment",
@@ -63,6 +64,16 @@ export default function CreateSubscriptionModal({
     };
 
     onAdd(newSub);
+
+    if (posthog) {
+      posthog.capture('subscription_created', {
+        subscription_name: name.trim(),
+        subscription_price: price,
+        subscription_frequency: billing,
+        subscription_category: category,
+      });
+    }
+
     setName("");
     setPrice("");
     setBilling("Monthly");
