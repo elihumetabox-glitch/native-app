@@ -15,6 +15,7 @@ import { useRouter } from "expo-router";
 import { useSignIn, useAuth } from "@clerk/expo";
 import { icons } from "@/constants/icons";
 import { getFriendlyAuthErrorMessage } from "@/lib/authErrors";
+import { posthog } from "@/src/lib/posthog";
 
 export default function SignInScreen() {
   const router = useRouter();
@@ -87,7 +88,12 @@ export default function SignInScreen() {
       }
 
       if (signIn.status === "complete") {
-        await signIn.finalize();
+        const { error } = await signIn.finalize();
+        if (error) {
+          setErrorMessage(getFriendlyAuthErrorMessage(error));
+          return;
+        }
+        posthog?.capture("user_signed_in", { method: "password" });
         router.replace("/(tabs)");
       } else {
         setErrorMessage(
@@ -175,7 +181,12 @@ export default function SignInScreen() {
       }
 
       if (signIn.status === "complete") {
-        await signIn.finalize();
+        const { error } = await signIn.finalize();
+        if (error) {
+          setErrorMessage(getFriendlyAuthErrorMessage(error));
+          return;
+        }
+        posthog?.capture("password_reset_completed");
         router.replace("/(tabs)");
       } else {
         setErrorMessage(

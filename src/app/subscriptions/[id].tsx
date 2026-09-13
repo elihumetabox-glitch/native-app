@@ -8,16 +8,18 @@ import {
   Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useLocalSearchParams, useRouter, Redirect } from "expo-router";
+import { useLocalSearchParams, useRouter, Redirect, useNavigation } from "expo-router";
 import {
   formatCurrency,
   formatStatusLabel,
   formatSubscriptionDateTime,
 } from "@/lib/utils";
 import { useSubscriptions } from "@/lib/subscriptionsStore";
+import { posthog } from "@/src/lib/posthog";
 
 export default function SubscriptionDetailsScreen() {
   const router = useRouter();
+  const navigation = useNavigation();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { subscriptions, updateSubscription } = useSubscriptions();
 
@@ -32,6 +34,10 @@ export default function SubscriptionDetailsScreen() {
   const handleToggleStatus = () => {
     const newStatus = currentStatus === "active" ? "paused" : "active";
     updateSubscription(sub.id, {
+      status: newStatus,
+    });
+    posthog?.capture("subscription_status_updated", {
+      previous_status: currentStatus,
       status: newStatus,
     });
     Alert.alert(
@@ -51,6 +57,9 @@ export default function SubscriptionDetailsScreen() {
           style: "destructive",
           onPress: () => {
             updateSubscription(sub.id, { status: "cancelled" });
+            posthog?.capture("subscription_cancelled", {
+              previous_status: currentStatus,
+            });
             Alert.alert(
               "Subscription Cancelled",
               `${sub.name} has been marked as cancelled.`
@@ -81,7 +90,13 @@ export default function SubscriptionDetailsScreen() {
           }}
         >
           <TouchableOpacity
-            onPress={() => router.back()}
+            onPress={() => {
+              if (navigation.canGoBack()) {
+                router.back();
+              } else {
+                router.replace("/(tabs)");
+              }
+            }}
             activeOpacity={0.7}
             style={{
               paddingHorizontal: 14,

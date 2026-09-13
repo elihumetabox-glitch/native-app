@@ -5,8 +5,6 @@ export const formatCurrency = (value: number, currency = "USD"): string => {
         return new Intl.NumberFormat("en-US", {
             style: "currency",
             currency,
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
         }).format(value);
     } catch {
         return value.toFixed(2);
@@ -14,9 +12,8 @@ export const formatCurrency = (value: number, currency = "USD"): string => {
 };
 
 export const convertCurrency = (amount: number, from: string, to: string): number => {
-    // Placeholder conversion. In a real app, this would use real rates.
-    // Assuming 1:1 conversion for now as no conversion rates are available.
-    return amount;
+    if (from === to) return amount;
+    throw new Error(`Conversion from ${from} to ${to} is not supported.`);
 };
 
 export const formatSubscriptionDateTime = (value?: string): string => {
