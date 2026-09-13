@@ -100,6 +100,8 @@ export default function CreateSubscriptionModal({
               onPress={onClose}
               className="modal-close"
               activeOpacity={0.7}
+              accessibilityRole="button"
+              accessibilityLabel="Close"
             >
               <Text className="modal-close-text">✕</Text>
             </TouchableOpacity>

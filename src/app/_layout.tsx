@@ -1,7 +1,7 @@
 import { SplashScreen, Stack } from "expo-router";
 import "@/global.css";
 import { useFonts } from "expo-font";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Text, View } from "react-native";
 import { ClerkProvider, useUser } from "@clerk/expo";
 import { PostHogErrorBoundary, PostHogProvider } from "posthog-react-native";
@@ -28,18 +28,25 @@ function PostHogErrorFallback() {
 
 function PostHogIdentity() {
   const { isLoaded, user } = useUser();
+  const [lastUserId, setLastUserId] = useState<string | null | undefined>(undefined);
 
   useEffect(() => {
-    if (!isLoaded || !user?.id) return;
+    if (!isLoaded) return;
 
-    const personProperties: Record<string, string> = {};
-    const email = user.primaryEmailAddress?.emailAddress;
-    const name = user.fullName || user.firstName;
+    if (user?.id) {
+      const personProperties: Record<string, string> = {};
+      const email = user.primaryEmailAddress?.emailAddress;
+      const name = user.fullName || user.firstName;
 
-    if (email) personProperties.email = email;
-    if (name) personProperties.name = name;
+      if (email) personProperties.email = email;
+      if (name) personProperties.name = name;
 
-    posthog?.identify(user.id, { $set: personProperties });
+      posthog?.identify(user.id, { $set: personProperties });
+    } else if (lastUserId) {
+      posthog?.reset();
+    }
+
+    setLastUserId(user?.id);
   }, [isLoaded, user?.id]);
 
   return null;
