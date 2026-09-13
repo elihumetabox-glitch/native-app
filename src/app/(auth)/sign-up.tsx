@@ -108,7 +108,11 @@ export default function SignUpScreen() {
 
       // If sign-up is already complete without verification
       if (signUp.status === "complete") {
-        await signUp.finalize();
+        const { error } = await signUp.finalize();
+        if (error) {
+          setErrorMessage(getFriendlyAuthErrorMessage(error));
+          return;
+        }
         posthog?.capture("account_created", { method: "email" });
         router.replace("/(tabs)");
         return;
@@ -154,7 +158,11 @@ export default function SignUpScreen() {
       }
 
       if (signUp.status === "complete") {
-        await signUp.finalize();
+        const { error } = await signUp.finalize();
+        if (error) {
+          setErrorMessage(getFriendlyAuthErrorMessage(error));
+          return;
+        }
         posthog?.capture("account_created", { method: "email" });
         router.replace("/(tabs)");
       } else {

@@ -67,8 +67,6 @@ export default function CreateSubscriptionModal({
 
     if (posthog) {
       posthog.capture('subscription_created', {
-        subscription_name: name.trim(),
-        subscription_price: price,
         subscription_frequency: billing,
         subscription_category: category,
       });
@@ -81,7 +79,8 @@ export default function CreateSubscriptionModal({
     onClose();
   };
 
-  const isFormValid = name.trim() !== "" && Number(price) > 0;
+  const parsedPrice = Number(price);
+  const isFormValid = name.trim() !== "" && Number.isFinite(parsedPrice) && parsedPrice > 0;
 
   return (
     <Modal
@@ -106,7 +105,7 @@ export default function CreateSubscriptionModal({
             </TouchableOpacity>
           </View>
 
-          <ScrollView className="modal-body" showsVerticalScrollIndicator={false}>
+          <ScrollView className="modal-body" showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
             {/* Name */}
             <View className="auth-field">
               <Text className="auth-label">Subscription Name</Text>

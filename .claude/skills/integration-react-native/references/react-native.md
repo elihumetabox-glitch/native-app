@@ -1378,7 +1378,7 @@ export function MyApp() {
     return (
         <PostHogProvider apiKey="<ph_project_token>" options={{
             // Disable PostHog in development (or whatever other logic you choose)
-            disabled: __DEV__,
+            disable: __DEV__,
         }}>
             <MyComponent />
         </PostHogProvider>

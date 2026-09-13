@@ -88,7 +88,11 @@ export default function SignInScreen() {
       }
 
       if (signIn.status === "complete") {
-        await signIn.finalize();
+        const { error } = await signIn.finalize();
+        if (error) {
+          setErrorMessage(getFriendlyAuthErrorMessage(error));
+          return;
+        }
         posthog?.capture("user_signed_in", { method: "password" });
         router.replace("/(tabs)");
       } else {
@@ -177,7 +181,11 @@ export default function SignInScreen() {
       }
 
       if (signIn.status === "complete") {
-        await signIn.finalize();
+        const { error } = await signIn.finalize();
+        if (error) {
+          setErrorMessage(getFriendlyAuthErrorMessage(error));
+          return;
+        }
         posthog?.capture("password_reset_completed");
         router.replace("/(tabs)");
       } else {

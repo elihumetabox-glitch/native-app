@@ -8,7 +8,7 @@ import {
   Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useLocalSearchParams, useRouter, Redirect } from "expo-router";
+import { useLocalSearchParams, useRouter, Redirect, useNavigation } from "expo-router";
 import {
   formatCurrency,
   formatStatusLabel,
@@ -19,6 +19,7 @@ import { posthog } from "@/src/lib/posthog";
 
 export default function SubscriptionDetailsScreen() {
   const router = useRouter();
+  const navigation = useNavigation();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { subscriptions, updateSubscription } = useSubscriptions();
 
@@ -89,7 +90,13 @@ export default function SubscriptionDetailsScreen() {
           }}
         >
           <TouchableOpacity
-            onPress={() => router.back()}
+            onPress={() => {
+              if (navigation.canGoBack()) {
+                router.back();
+              } else {
+                router.replace("/(tabs)");
+              }
+            }}
             activeOpacity={0.7}
             style={{
               paddingHorizontal: 14,

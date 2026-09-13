@@ -77,6 +77,8 @@ export default function App() {
                 <TouchableOpacity
                   onPress={() => setModalVisible(true)}
                   activeOpacity={0.7}
+                  accessibilityLabel="Add New Subscription"
+                  accessibilityRole="button"
                 >
                   <Image source={icons.add} className="home-add-icon" />
                 </TouchableOpacity>
