@@ -3,270 +3,127 @@ import {
   View,
   Text,
   TouchableOpacity,
-  ScrollView,
+  StyleSheet,
   Image,
+  useWindowDimensions,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { StatusBar } from "expo-status-bar";
 import { useRouter } from "expo-router";
-import { icons } from "@/constants/icons";
 
 export default function OnboardingScreen() {
   const router = useRouter();
+  const { width } = useWindowDimensions();
+
+  // The splash pattern image is 440 x 551
+  const imageWidth = Math.min(width, 440);
 
   return (
-    <SafeAreaView
-      style={{
-        flex: 1,
-        backgroundColor: "#fff9e3",
-      }}
-    >
-      <ScrollView
-        contentContainerStyle={{
-          flexGrow: 1,
-          justifyContent: "space-between",
-          paddingHorizontal: 24,
-          paddingVertical: 20,
-        }}
-        showsVerticalScrollIndicator={false}
-      >
-        {/* Top Branding */}
-        <View style={{ alignItems: "center", marginTop: 20 }}>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 12,
-              marginBottom: 24,
-            }}
-          >
-            <View
-              style={{
-                width: 56,
-                height: 56,
-                borderRadius: 16,
-                backgroundColor: "#ea7a53",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <Image
-                source={icons.logo}
-                style={{ width: 32, height: 32 }}
-                resizeMode="contain"
-              />
-            </View>
-            <View>
-              <Text
-                style={{
-                  fontSize: 28,
-                  fontWeight: "800",
-                  color: "#081126",
-                  fontFamily: "sans-extrabold",
-                }}
-              >
-                Recurly
-              </Text>
-              <Text
-                style={{
-                  fontSize: 12,
-                  fontWeight: "600",
-                  letterSpacing: 1.5,
-                  textTransform: "uppercase",
-                  color: "rgba(0, 0, 0, 0.6)",
-                  fontFamily: "sans-semibold",
-                }}
-              >
-                Subscription Tracker
-              </Text>
-            </View>
-          </View>
+    <SafeAreaView style={styles.container} edges={["top", "bottom"]}>
+      <StatusBar style="light" />
 
-          {/* Hero Pitch */}
+      {/* Top Graphic Area matching 440 x 551 dimension */}
+      <View style={styles.imageWrapper}>
+        <Image
+          source={require("@/assets/images/splash-pattern.png")}
+          style={[
+            styles.splashImage,
+            {
+              width: imageWidth,
+              height: (imageWidth * 551) / 440,
+            },
+          ]}
+          resizeMode="contain"
+        />
+      </View>
+
+      {/* Bottom Content Area */}
+      <View style={styles.content}>
+        <View style={styles.textContainer}>
           <Text
-            style={{
-              fontSize: 32,
-              fontWeight: "800",
-              color: "#081126",
-              textAlign: "center",
-              lineHeight: 40,
-              fontFamily: "sans-extrabold",
-              marginBottom: 12,
-            }}
+            style={styles.title}
+            numberOfLines={1}
+            adjustsFontSizeToFit
           >
-            Take Control of Your Subscriptions
+            Gain Financial Clarity
           </Text>
-
-          <Text
-            style={{
-              fontSize: 16,
-              color: "rgba(0, 0, 0, 0.65)",
-              textAlign: "center",
-              lineHeight: 24,
-              fontFamily: "sans-medium",
-              maxWidth: 320,
-            }}
-          >
-            Track renewals, discover hidden costs, and optimize your monthly
-            spending with effortless clarity.
+          <Text style={styles.subtitle}>
+            Track, analyze and cancel with ease
           </Text>
         </View>
 
-        {/* Value Prop Cards */}
-        <View style={{ gap: 14, marginVertical: 32 }}>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              backgroundColor: "#fff8e7",
-              borderRadius: 20,
-              borderWidth: 1,
-              borderColor: "rgba(0,0,0,0.08)",
-              padding: 16,
-              gap: 14,
-            }}
-          >
-            <View
-              style={{
-                width: 44,
-                height: 44,
-                borderRadius: 12,
-                backgroundColor: "#8fd1bd",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <Image
-                source={icons.activity}
-                style={{ width: 22, height: 22, tintColor: "#081126" }}
-                resizeMode="contain"
-              />
-            </View>
-            <View style={{ flex: 1 }}>
-              <Text
-                style={{
-                  fontSize: 16,
-                  fontWeight: "700",
-                  color: "#081126",
-                  fontFamily: "sans-bold",
-                }}
-              >
-                Renewal Reminders
-              </Text>
-              <Text
-                style={{
-                  fontSize: 13,
-                  color: "rgba(0,0,0,0.55)",
-                  fontFamily: "sans-regular",
-                }}
-              >
-                Never get surprised by unexpected recurring charges.
-              </Text>
-            </View>
-          </View>
-
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              backgroundColor: "#fff8e7",
-              borderRadius: 20,
-              borderWidth: 1,
-              borderColor: "rgba(0,0,0,0.08)",
-              padding: 16,
-              gap: 14,
-            }}
-          >
-            <View
-              style={{
-                width: 44,
-                height: 44,
-                borderRadius: 12,
-                backgroundColor: "#ea7a53",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <Image
-                source={icons.wallet}
-                style={{ width: 22, height: 22, tintColor: "#ffffff" }}
-                resizeMode="contain"
-              />
-            </View>
-            <View style={{ flex: 1 }}>
-              <Text
-                style={{
-                  fontSize: 16,
-                  fontWeight: "700",
-                  color: "#081126",
-                  fontFamily: "sans-bold",
-                }}
-              >
-                Expense Insights
-              </Text>
-              <Text
-                style={{
-                  fontSize: 13,
-                  color: "rgba(0,0,0,0.55)",
-                  fontFamily: "sans-regular",
-                }}
-              >
-                Categorized breakdowns of your software and service stack.
-              </Text>
-            </View>
-          </View>
-        </View>
-
-        {/* Action Buttons */}
-        <View style={{ gap: 12, marginBottom: 16 }}>
-          <TouchableOpacity
-            style={{
-              backgroundColor: "#ea7a53",
-              borderRadius: 18,
-              paddingVertical: 16,
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-            activeOpacity={0.85}
-            onPress={() => router.push("/(auth)/sign-up")}
-          >
-            <Text
-              style={{
-                color: "#ffffff",
-                fontSize: 16,
-                fontWeight: "700",
-                fontFamily: "sans-bold",
-              }}
-            >
-              Get Started
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={{
-              backgroundColor: "transparent",
-              borderWidth: 1.5,
-              borderColor: "rgba(8, 17, 38, 0.2)",
-              borderRadius: 18,
-              paddingVertical: 14,
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-            activeOpacity={0.7}
-            onPress={() => router.push("/(auth)/sign-in")}
-          >
-            <Text
-              style={{
-                color: "#081126",
-                fontSize: 15,
-                fontWeight: "600",
-                fontFamily: "sans-semibold",
-              }}
-            >
-              I already have an account
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => router.push("/(auth)/sign-up")}
+          activeOpacity={0.85}
+        >
+          <Text style={styles.buttonText}>Get Started</Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#ea7a53",
+    justifyContent: "space-between",
+  },
+  imageWrapper: {
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    marginTop: 8,
+  },
+  splashImage: {
+    maxWidth: 440,
+  },
+  content: {
+    flex: 1,
+    justifyContent: "flex-end",
+    paddingHorizontal: 16,
+    paddingBottom: 20,
+    alignItems: "center",
+    width: "100%",
+  },
+  textContainer: {
+    marginBottom: 20,
+    alignItems: "center",
+    width: "100%",
+  },
+  title: {
+    fontSize: 34,
+    fontWeight: "800",
+    color: "#ffffff",
+    fontFamily: "sans-extrabold",
+    textAlign: "center",
+    letterSpacing: -0.3,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: "rgba(255, 255, 255, 0.85)",
+    fontFamily: "sans-medium",
+    textAlign: "center",
+    marginTop: 12,
+  },
+  button: {
+    backgroundColor: "#ffffff",
+    height: 58,
+    borderRadius: 30,
+    alignItems: "center",
+    justifyContent: "center",
+    alignSelf: "stretch",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  buttonText: {
+    fontSize: 17,
+    fontWeight: "700",
+    color: "#081126",
+    fontFamily: "sans-bold",
+  },
+});
