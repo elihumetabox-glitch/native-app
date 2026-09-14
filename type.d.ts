@@ -31,6 +31,7 @@ declare global {
         expanded: boolean;
         onPress: () => void;
         onCancelPress?: () => void;
+        onChangePlanPress?: () => void;
         isCancelling?: boolean;
     }
 
