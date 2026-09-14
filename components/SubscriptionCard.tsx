@@ -1,4 +1,4 @@
-import { View, Text, Image, Pressable } from "react-native";
+import { View, Text, Image, Pressable, TouchableOpacity } from "react-native";
 import React from "react";
 import {
   formatCurrency,
@@ -21,6 +21,9 @@ const SubscriptionCard = ({
   onPress,
   startDate,
   status,
+  onCancelPress,
+  isCancelling,
+  onChangePlanPress,
 }: SubscriptionCardProps) => {
   const fallBack = "Not provided";
   return (
@@ -54,6 +57,32 @@ const SubscriptionCard = ({
       {expanded && (
         <View className="sub-body">
           <View className="sub-details">
+            <View className="sub-row">
+              <View className="sub-row-copy">
+                <Text className="sub-label">Payment info:</Text>
+                <Text className="sub-value" numberOfLines={1}>
+                  *****8530
+                </Text>
+              </View>
+              <TouchableOpacity className="list-action">
+                <Text className="text-sm font-sans-semibold text-primary">
+                  Manage
+                </Text>
+              </TouchableOpacity>
+            </View>
+            <View className="sub-row">
+              <View className="sub-row-copy">
+                <Text className="sub-label">Plan details:</Text>
+                <Text className="sub-value" numberOfLines={1}>
+                  {plan || fallBack}
+                </Text>
+              </View>
+              <TouchableOpacity className="list-action" onPress={onChangePlanPress}>
+                <Text className="text-sm font-sans-semibold text-primary">
+                  Change
+                </Text>
+              </TouchableOpacity>
+            </View>
             <View className="sub-row">
               <View className="sub-row-copy">
                 <Text className="sub-label">Category:</Text>
@@ -107,6 +136,17 @@ const SubscriptionCard = ({
               </View>
             </View>
           </View>
+          {onCancelPress && status !== "cancelled" && (
+            <TouchableOpacity
+              onPress={onCancelPress}
+              disabled={isCancelling}
+              className="mt-4 bg-red-100 p-3 rounded-xl items-center"
+            >
+              <Text className="text-red-500 font-bold">
+                {isCancelling ? "Cancelling..." : "Cancel Subscription"}
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
       )}
     </Pressable>

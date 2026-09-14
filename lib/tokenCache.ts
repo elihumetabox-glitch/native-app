@@ -3,6 +3,8 @@ import { Platform } from "react-native";
 import type { TokenCache } from "@clerk/expo";
 
 const createTokenCache = (): TokenCache | undefined => {
+  //returning undefined cause expo-secure-store is only for mobile-apps not for web
+  // Clerk Auth has fallback to web authentication storage
   if (Platform.OS === "web") {
     return undefined;
   }

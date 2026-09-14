@@ -74,9 +74,12 @@ export default function RootLayout() {
   const content = <Stack screenOptions={{headerShown: false}}/>;
 
   return (
-    <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
+    <ClerkProvider
+        publishableKey={publishableKey}
+        tokenCache={tokenCache}>
       {posthog ? (
-        <PostHogProvider client={posthog}>
+        <PostHogProvider
+            client={posthog}>
           <PostHogErrorBoundary fallback={PostHogErrorFallback}>
             <PostHogIdentity />
             {content}

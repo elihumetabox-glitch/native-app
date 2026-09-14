@@ -20,6 +20,7 @@ import ListHeading from "@/components/ListHeading";
 import UpcomingSubscriptionCard from "@/components/UpcomingSubscriptionCard";
 import SubscriptionCard from "@/components/SubscriptionCard";
 import CreateSubscriptionModal from "@/components/CreateSubscriptionModal";
+import { router } from "expo-router";
 import { useState, useMemo } from "react";
 import { useUser } from "@clerk/expo";
 import { useSubscriptions } from "@/lib/subscriptionsStore";
@@ -111,7 +112,7 @@ export default function App() {
               </View>
 
               <View className="mb-5">
-                <ListHeading title="Upcoming" />
+                <ListHeading title="Upcoming" onPress={() => router.push("/(tabs)/insights")} />
 
                 <FlatList
                   data={upcomingSubscriptions}
@@ -125,7 +126,7 @@ export default function App() {
                 />
               </View>
 
-              <ListHeading title="All Subscriptions" />
+              <ListHeading title="All Subscriptions" onPress={() => router.push("/(tabs)/subscriptions")} />
             </>
           )}
           data={subscriptions}

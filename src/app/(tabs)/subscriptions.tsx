@@ -5,12 +5,14 @@ import {
   FlatList,
   TextInput,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import { SafeAreaView as RNSafeAreaView } from "react-native-safe-area-context";
 import { styled } from "nativewind";
 import { formatCurrency, convertCurrency } from "@/lib/utils";
 import SubscriptionCard from "@/components/SubscriptionCard";
 import { useSubscriptions } from "@/lib/subscriptionsStore";
+import ListHeading from "@/components/ListHeading";
 
 const SafeAreaView = styled(RNSafeAreaView);
 
@@ -24,12 +26,13 @@ const FILTERS: { label: string; value: FilterStatus }[] = [
 ];
 
 export default function SubscriptionsScreen() {
-  const { subscriptions } = useSubscriptions();
+  const { subscriptions, updateSubscription } = useSubscriptions();
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<FilterStatus>("all");
   const [expandedSubscriptionId, setExpandedSubscriptionId] = useState<
     string | null
   >(null);
+  const [cancellingSubscriptions, setCancellingSubscriptions] = useState<Set<string>>(new Set());
 
   const filteredSubscriptions = useMemo(() => {
     return subscriptions.filter((sub) => {
@@ -73,15 +76,18 @@ export default function SubscriptionsScreen() {
         ListHeaderComponent={() => (
           <View className="mb-4">
             {/* Header Title */}
-            <View className="mb-4">
+            <View className="flex-row justify-between items-center mb-4">
               <Text className="text-3xl font-sans-extrabold text-primary">
-                Subscriptions
+                My Subscriptions
               </Text>
-              <Text className="text-sm font-sans-medium text-muted-foreground mt-1">
-                {activeCount} active subscriptions • {formatCurrency(totalMonthlySpend)}/mo
-              </Text>
+              <TouchableOpacity onPress={() => setStatusFilter("all")}>
+                <Text className="text-primary font-sans-semibold">All</Text>
+              </TouchableOpacity>
             </View>
-
+            <Text className="text-sm font-sans-medium text-muted-foreground mt-1 ml-1">
+                {activeCount} active subscriptions • {formatCurrency(totalMonthlySpend)}/mo
+            </Text>
+            
             {/* Spend Summary Banner */}
             <View
               style={{
@@ -211,6 +217,18 @@ export default function SubscriptionsScreen() {
                 currentId === item.id ? null : item.id
               )
             }
+            onCancelPress={() => {
+              setCancellingSubscriptions((prev) => new Set(prev).add(item.id));
+              updateSubscription(item.id, { status: "cancelled" });
+            }}
+            isCancelling={cancellingSubscriptions.has(item.id)}
+            onChangePlanPress={() => {
+              Alert.prompt("Change Plan", "Enter new plan name", (newPlan) => {
+                if (newPlan) {
+                  updateSubscription(item.id, { plan: newPlan });
+                }
+              });
+            }}
           />
         )}
         extraData={expandedSubscriptionId}
