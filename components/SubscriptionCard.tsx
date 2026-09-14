@@ -6,6 +6,7 @@ import {
   formatSubscriptionDateTime,
 } from "@/lib/utils";
 import { clsx } from "clsx";
+import { icons } from "@/constants/icons";
 
 const SubscriptionCard = ({
   name,
@@ -26,6 +27,9 @@ const SubscriptionCard = ({
   onChangePlanPress,
 }: SubscriptionCardProps) => {
   const fallBack = "Not provided";
+  const resolvedIcon =
+    typeof icon === "string" ? { uri: icon } : icon || icons.wallet;
+
   return (
     <Pressable
       onPress={onPress}
@@ -36,7 +40,7 @@ const SubscriptionCard = ({
     >
       <View className="sub-head">
         <View className="sub-main">
-          <Image source={icon} className="sub-icon" />
+          <Image source={resolvedIcon} className="sub-icon" resizeMode="contain" />
           <View className="sub-copy">
             <Text numberOfLines={1} className="sub-title">
               {name}
