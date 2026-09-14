@@ -28,6 +28,10 @@ import { posthog } from "@/src/lib/posthog";
 
 const SafeAreaView = styled(RNSafeAreaView);
 
+/**
+ * Renders the home tab with the account summary, upcoming renewals,
+ * subscription list, and add-subscription modal.
+ */
 export default function App() {
   const { subscriptions, addSubscription } = useSubscriptions();
 

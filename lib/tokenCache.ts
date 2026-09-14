@@ -2,6 +2,12 @@ import * as SecureStore from "expo-secure-store";
 import { Platform } from "react-native";
 import type { TokenCache } from "@clerk/expo";
 
+/**
+ * Creates the Clerk token-cache adapter for the current platform.
+ *
+ * Returns no adapter on web. On native platforms, read failures return null,
+ * while write and deletion failures are logged and rethrown.
+ */
 const createTokenCache = (): TokenCache | undefined => {
   //returning undefined cause expo-secure-store is only for mobile-apps not for web
   // Clerk Auth has fallback to web authentication storage
