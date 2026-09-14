@@ -5,6 +5,10 @@ interface BarChartProps {
   data: { day: string; value: number; isHighlight?: boolean }[];
 }
 
+/**
+ * Renders labeled bars scaled against the largest value, with optional
+ * highlighting and value labels.
+ */
 const BarChart = ({ data }: BarChartProps) => {
   const maxValue = Math.max(...data.map(d => d.value));
 

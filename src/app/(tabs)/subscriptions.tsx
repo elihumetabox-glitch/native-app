@@ -25,6 +25,10 @@ const FILTERS: { label: string; value: FilterStatus }[] = [
   { label: "Cancelled", value: "cancelled" },
 ];
 
+/**
+ * Renders the searchable, status-filtered subscription list and active monthly
+ * total, with actions to change plans or cancel subscriptions.
+ */
 export default function SubscriptionsScreen() {
   const { subscriptions, updateSubscription } = useSubscriptions();
   const [searchQuery, setSearchQuery] = useState("");

@@ -7,6 +7,12 @@ import {
 } from "@/lib/utils";
 import { clsx } from "clsx";
 
+/**
+ * Renders a collapsible subscription summary and its details.
+ *
+ * Expanded cards expose the supplied plan-change callback and, for
+ * non-canceled subscriptions, an optional cancellation action.
+ */
 const SubscriptionCard = ({
   name,
   price,

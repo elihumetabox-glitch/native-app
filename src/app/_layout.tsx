@@ -52,6 +52,10 @@ function PostHogIdentity() {
   return null;
 }
 
+/**
+ * Loads the application fonts and renders the route stack inside the Clerk and
+ * optional PostHog providers. Font-loading errors are rethrown.
+ */
 export default function RootLayout() {
   const [fontsLoaded, fontError] = useFonts({
     "sans-regular": require("../../assets/fonts/PlusJakartaSans-Regular.ttf"),

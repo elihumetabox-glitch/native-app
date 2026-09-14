@@ -7,6 +7,10 @@ import { router } from "expo-router";
 
 const SafeAreaView = styled(RNSafeAreaView);
 
+/**
+ * Renders the monthly insights tab with its weekly chart, expense summary,
+ * history entries, and navigation shortcuts.
+ */
 export default function InsightsScreen() {
   const chartData = [
     { day: 'Mon', value: 35 },
